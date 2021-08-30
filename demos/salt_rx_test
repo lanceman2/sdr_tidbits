@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -ex
+
+dir="$(dirname ${BASH_SOURCE[0]})"
+cd $dir
+
+
+# From running airspyhf_get_samplerates()
+# possible sample rates are: 912000 768000 456000 384000 256000 192000
+freq=2000000
+sampleRate=912000
+
+
+tmpdir=$(mktemp -d)
+trap "rm -rf $tmpdir" EXIT
+
+pipeFIle=$tmpdir/fifo
+
+mkfifo $pipeFIle
+
+
+quickstream\
+ -t 0\
+ --block airspyhf/rx rx\
+ --block tests/stdout out\
+ --block liquid-dsp/liquidSync sync\
+ --block fileOut pipe\
+ --connect rx 0 pipe 0\
+ --connect rx 0 sync 0\
+ --connect sync 0 out 0\
+ --parameter-set rx freq $freq\
+ --parameter-set rx rate $sampleRate\
+ --parameter-set pipe filename $pipeFIle\
+ --run | hexdump -v &
+
+
+grrun tb_GNURadioScope\
+ $sampleRate $freq\
+ "airspyhf Rx sampleRate=$sampleRate freq=$freq"\
+ < $pipeFIle

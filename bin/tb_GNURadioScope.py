@@ -40,10 +40,10 @@ from gnuradio import qtgui
 
 class tb_GNURadioScope(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
+    def __init__(self, bw, freq, title):
         gr.top_block.__init__(self, "tb_GNURadioScope", catch_exceptions=True)
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("tb_GNURadioScope")
+        self.setWindowTitle(title)
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -77,8 +77,8 @@ class tb_GNURadioScope(gr.top_block, Qt.QWidget):
         self.qtgui_sink_x_0 = qtgui.sink_c(
             1024, #fftsize
             window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
-            1000000.0, #bw
+            freq, #fc
+            bw, #bw
             "", #name
             True, #plotfreq
             True, #plotwaterfall
@@ -89,7 +89,7 @@ class tb_GNURadioScope(gr.top_block, Qt.QWidget):
         self.qtgui_sink_x_0.set_update_time(1.0/10)
         self._qtgui_sink_x_0_win = sip.wrapinstance(self.qtgui_sink_x_0.pyqwidget(), Qt.QWidget)
 
-        self.qtgui_sink_x_0.enable_rf_freq(False)
+        self.qtgui_sink_x_0.enable_rf_freq(True)
 
         self.top_layout.addWidget(self._qtgui_sink_x_0_win)
         self.blocks_file_descriptor_source_0 = blocks.file_descriptor_source(gr.sizeof_gr_complex*1, 0, True)
@@ -111,6 +111,10 @@ class tb_GNURadioScope(gr.top_block, Qt.QWidget):
         event.accept()
 
 
+def Usage():
+    print(("Usage: %s [ bandwidth in Hz | [ center_frequency in Hz | [ Window Title ] ] ]\n") %
+            (sys.argv[0]))
+    quit()
 
 
 def main(top_block_cls=tb_GNURadioScope, options=None):
@@ -120,7 +124,32 @@ def main(top_block_cls=tb_GNURadioScope, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls()
+    argc = len(sys.argv)
+
+    for i in range(1, argc):
+        arg = sys.argv[i]
+        if arg in ("-h", "--help"):
+            Usage()
+
+    if(argc > 1):
+        bw = float(sys.argv[1])
+    else:
+        bw = 1000000 # Hz
+
+    if(argc > 2):
+        freq = float(sys.argv[2])
+    else:
+        freq = 0 # it's just a center label
+
+    if(argc > 3):
+        title = sys.argv[3]
+    else:
+        title = "GNU Radio Scope"
+
+
+    print(("setting: bw=%g freq=%g title=\"%s\"") % (bw, freq, title))
+
+    tb = top_block_cls(bw, freq, title)
 
     tb.start()
 

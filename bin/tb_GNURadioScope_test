@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -ex
+
+cd $(dirname ${BASH_SOURCE[0]})
+
+./tb_8bitsToEachFloat < /dev/urandom |\
+ # tb_GNURadioScope.py bw freq TITLE\
+ grrun ./tb_GNURadioScope 1000000 3000000 "My dog ate my homework"
+

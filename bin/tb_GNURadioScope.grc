@@ -6,12 +6,12 @@ options:
     cmake_opt: ''
     comment: ''
     copyright: ''
-    description: reads stdin and feeds GNUradio QT GUI Sink Scope
+    description: reads stdin and feeds GNUradio QT GUI Sink Plotter
     gen_cmake: 'On'
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: tb_GNURadioScope
+    id: tb_plotter
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,7 +22,7 @@ options:
     run_options: prompt
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: tb_GNURadioScope
+    title: tb_plotter
   states:
     bus_sink: false
     bus_source: false
@@ -42,13 +42,13 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     repeat: 'True'
-    type: complex
+    type: float
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [168, 300.0]
+    coordinate: [176, 324.0]
     rotation: 0
     state: true
 - name: qtgui_sink_x_0
@@ -56,7 +56,7 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    bw: '1000000.0'
+    bw: '1'
     comment: ''
     fc: '0'
     fftsize: '1024'
@@ -64,20 +64,20 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     name: '""'
-    plotconst: 'True'
-    plotfreq: 'True'
+    plotconst: 'False'
+    plotfreq: 'False'
     plottime: 'True'
-    plotwaterfall: 'True'
+    plotwaterfall: 'False'
     rate: '10'
     showports: 'False'
     showrf: 'False'
-    type: complex
+    type: float
     wintype: window.WIN_BLACKMAN_hARRIS
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [440, 276.0]
+    coordinate: [640, 344.0]
     rotation: 0
     state: true
 
